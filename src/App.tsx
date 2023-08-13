@@ -10,6 +10,9 @@ const App: React.FC = () => {
       <div className="App">
         <Task />
       </div>
+      <div>
+        <h2 className="text-purple-600"> titulo en otro color</h2>
+      </div>
     </Provider>
   );
 }

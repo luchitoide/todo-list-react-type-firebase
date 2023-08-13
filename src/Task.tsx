@@ -31,7 +31,7 @@ const Task: React.FC = () => {
 
   return (
     <div className="task-container">
-      <h1>TO-DO List</h1>
+      <h1 className="text-purple-600">TO-DO List</h1>
       <div>
         <input
           type="text"
