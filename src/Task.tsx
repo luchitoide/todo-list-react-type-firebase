@@ -1,37 +1,32 @@
 import React, { useState } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
+import { addTask, toggleTask, removeTask } from './features/taskSlice';
+import axios from 'axios';
+import { Task as TaskType } from './features/taskSlice'; // Cambio de nombre del tipo
 
-interface Task {
-  id: number;
-  task: string;
-  completed: boolean;
-}
-
-const TaskComponent: React.FC = () => {
-  const [tasks, setTasks] = useState<Task[]>([]);
+const Task: React.FC = () => {
   const [newTask, setNewTask] = useState<string>('');
+  const tasks = useSelector((state: { tasks: { tasks: TaskType[] } }) => state.tasks.tasks); // Uso del nuevo nombre del tipo
+  const dispatch = useDispatch();
 
   const handleAddTask = () => {
     if (newTask.trim()) {
-      const newTaskItem: Task = {
-        id: Date.now(),
-        task: newTask,
-        completed: false,
-      };
-      setTasks([...tasks, newTaskItem]);
+      dispatch(addTask(newTask));
       setNewTask('');
     }
   };
 
   const handleToggleTask = (taskId: number) => {
-    const updatedTasks = tasks.map((task) =>
-      task.id === taskId ? { ...task, completed: !task.completed } : task
-    );
-    setTasks(updatedTasks);
+    dispatch(toggleTask(taskId));
   };
 
-  const handleRemoveTask = (taskId: number) => {
-    const updatedTasks = tasks.filter((task) => task.id !== taskId);
-    setTasks(updatedTasks);
+  const handleRemoveTask = async (taskId: number) => {
+    try {
+      await axios.delete(`https://jsonplaceholder.typicode.com/todos/${taskId}`);
+      dispatch(removeTask(taskId));
+    } catch (error) {
+      console.error('Error removing task', error);
+    }
   };
 
   return (
@@ -42,19 +37,19 @@ const TaskComponent: React.FC = () => {
           type="text"
           placeholder="Add a new task..."
           value={newTask}
-          onChange={(e) => setNewTask(e.target.value)}
+          onChange={e => setNewTask(e.target.value)}
         />
         <button onClick={handleAddTask}>Add</button>
       </div>
       <ul className="task-list">
-        {tasks.map((task) => (
+        {tasks.map(task => (
           <li
             key={task.id}
             className={`task ${task.completed ? 'completed' : ''}`}
             onClick={() => handleToggleTask(task.id)}
           >
             {task.task}
-            <button onClick={(e) => {e.stopPropagation(); handleRemoveTask(task.id)}}>Remove</button>
+            <button onClick={() => handleRemoveTask(task.id)}>Remove</button>
           </li>
         ))}
       </ul>
@@ -62,4 +57,4 @@ const TaskComponent: React.FC = () => {
   );
 };
 
-export default TaskComponent;
+export default Task;

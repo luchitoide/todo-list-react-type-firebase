@@ -1,12 +1,16 @@
 import React from 'react';
 import './App.css';
-import TaskComponent from './Task';
+import Task from './Task';
+import { Provider } from 'react-redux';
+import store from './store';
 
-function App() {
+const App: React.FC = () => {
   return (
-    <div className="App">
-      <TaskComponent />
-    </div>
+    <Provider store={store}>
+      <div className="App">
+        <Task />
+      </div>
+    </Provider>
   );
 }
 
