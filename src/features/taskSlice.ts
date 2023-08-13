@@ -8,10 +8,12 @@ export interface Task {
 
 interface TaskState {
   tasks: Task[];
+  isAuthenticated: boolean;
 }
 
 const initialState: TaskState = {
   tasks: [],
+  isAuthenticated: false,
 };
 
 const taskSlice = createSlice({
@@ -30,9 +32,12 @@ const taskSlice = createSlice({
     removeTask: (state, action: PayloadAction<number>) => {
       state.tasks = state.tasks.filter(task => task.id !== action.payload);
     },
+    setAuthentication(state, action) {
+      state.isAuthenticated = action.payload;
+    },
   },
 });
 
-export const { addTask, toggleTask, removeTask } = taskSlice.actions;
+export const { addTask, toggleTask, removeTask,setAuthentication } = taskSlice.actions;
 
 export default taskSlice.reducer;

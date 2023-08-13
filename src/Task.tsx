@@ -3,8 +3,15 @@ import { useSelector, useDispatch } from "react-redux";
 import { addTask, toggleTask, removeTask } from "./features/taskSlice";
 import axios from "axios";
 import { Task as TaskType } from "./features/taskSlice";
+import { auth } from "./components/firebaseConfig";
+
 
 const Task: React.FC = () => {
+
+  const isAuthenticated = useSelector(
+    (state: { tasks: { isAuthenticated: boolean } }) => state.tasks.isAuthenticated
+  );
+  
   const [newTask, setNewTask] = useState<string>("");
   const tasks = useSelector(
     (state: { tasks: { tasks: TaskType[] } }) => state.tasks.tasks
@@ -12,6 +19,7 @@ const Task: React.FC = () => {
   const dispatch = useDispatch();
 
   const [completedTasks, setCompletedTasks] = useState<number[]>([]);
+  
 
   const handleAddTask = () => {
     if (newTask.trim()) {
@@ -46,6 +54,8 @@ const Task: React.FC = () => {
   return (
     <div className="h-100 w-full flex items-center justify-center bg-teal-lightest font-sans">
       <div className="bg-white rounded shadow p-6 m-8 w-full lg:w-3/4 lg:max-w-lg">
+        {isAuthenticated ? (
+          <>
         <div className="mb-4">
           <h1 className="text-grey-darkest text-3xl mb-4">TO-DO List</h1>
           <div className="flex mt-4">
@@ -107,7 +117,16 @@ const Task: React.FC = () => {
             </li>
           ))}
         </ul>
-        </div>       
+        </div>  
+        </>
+        ) : (
+          <>
+          <div className="text-center">
+            <h1 className="text-grey-darkest text-3xl mb-4">TO-DO List</h1>
+            <p className="text-red-500 text-xl mb-4">You must log in first.</p>
+          </div>
+          </>
+        )}     
       </div>
     </div>
   );
