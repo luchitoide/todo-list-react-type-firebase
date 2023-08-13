@@ -9,6 +9,8 @@ const Task: React.FC = () => {
   const tasks = useSelector((state: { tasks: { tasks: TaskType[] } }) => state.tasks.tasks);
   const dispatch = useDispatch();
 
+  const [completedTasks, setCompletedTasks] = useState<number[]>([]);
+
   const handleAddTask = () => {
     if (newTask.trim()) {
       dispatch(addTask(newTask));
@@ -26,6 +28,14 @@ const Task: React.FC = () => {
       dispatch(removeTask(taskId));
     } catch (error) {
       console.error('Error removing task', error);
+    }
+  };
+
+  const handleToggleDone = (taskId: number) => {
+    if (completedTasks.includes(taskId)) {
+      setCompletedTasks(completedTasks.filter(id => id !== taskId));
+    } else {
+      setCompletedTasks([...completedTasks, taskId]);
     }
   };
 
@@ -51,9 +61,14 @@ const Task: React.FC = () => {
             className={`task ${task.completed ? 'completed' : ''} cursor-pointer py-2`}
             onClick={() => handleToggleTask(task.id)}
           >
-            <div className="flex justify-between items-center">
-              <p className="text-black">{task.task}</p>
-              <button className='bg-white hover:bg-red-500 text-red-500 hover:text-white border-2 border-red-500 py-1 px-2 rounded' onClick={() => handleRemoveTask(task.id)}>
+            <div className="flex mb-4 items-center">
+              <p className={`w-full text-black ${completedTasks.includes(task.id) ? 'line-through' : ''}`}>
+                {task.task}
+              </p>
+              <button className='flex-no-shrink p-2 ml-4 bg-white hover:bg-green-500 text-green-500 hover:text-white border-2 border-green-500 py-1 px-2 rounded' onClick={() => handleToggleDone(task.id)}>
+                Done
+              </button>
+              <button className='flex-no-shrink p-2 ml-4 bg-white hover:bg-red-500 text-red-500 hover:text-white border-2 border-red-500 py-1 px-2 rounded' onClick={() => handleRemoveTask(task.id)}>
                 Remove
               </button>
             </div>
