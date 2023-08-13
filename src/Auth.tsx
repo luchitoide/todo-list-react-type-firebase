@@ -43,6 +43,13 @@ const Auth: React.FC = () => {
     }
   };
 
+  const handleLogOut = () => {
+    // Restablecer el estado de autenticación a false
+    dispatch(setAuthentication(false));
+    setUserEmail(null)
+  };
+  
+
   return (
     <div className="h-100 w-full flex items-center justify-center bg-teal-lightest font-sans">
       <div className="bg-white rounded shadow p-6 m-8 w-full lg:w-1/3">
@@ -52,7 +59,7 @@ const Auth: React.FC = () => {
               Welcome, {userEmail}!
             </p>
             <button
-              onClick={() => setUserEmail(null)} // Cerrar sesión
+              onClick={handleLogOut} // Cerrar sesión
               className="w-full p-2 rounded bg-teal-500 text-white hover:bg-teal-600"
             >
               Log Out
