@@ -19,7 +19,6 @@ import {
 } from "firebase/firestore/lite";
 
 const Task: React.FC = () => {
-  const user = auth.currentUser;
 
   const isAuthenticated = useSelector(
     (state: { tasks: { isAuthenticated: boolean } }) =>
@@ -37,14 +36,16 @@ const Task: React.FC = () => {
   const handleAddTask = async () => {
     if (newTask.trim()) {
       try {
-        const userTasksCollection = collection(db, "users", user.uid, "tasks");
-        await addDoc(userTasksCollection, {
+        const userTasksCollection = collection(db, "users", auth.currentUser.uid, "tasks");
+        const newTaskDocRef = await addDoc(userTasksCollection, {
           task: newTask,
           completed: false, // Agregar el estado inicial como "false"
         });
+        const newTaskId = newTaskDocRef.id; 
+        console.log(newTaskId);
+        
         setNewTask(""); // Limpiar el campo de entrada
-        const updatedTasks = [...tasks, { task: newTask, completed: false }];
-        dispatch(loadUserTasks(updatedTasks)); // Actualizar el estado local con la nueva tarea
+        dispatch(addTask({ id: newTaskId, task: newTask, completed: false }));
       } catch (error) {
         console.error("Error adding task to Firestore", error);
       }
@@ -54,7 +55,7 @@ const Task: React.FC = () => {
   useEffect(() => {
     const loadTasksFromFirestore = async () => {
       try {
-        const userTasksCollection = collection(db, "users", user.uid, "tasks");
+        const userTasksCollection = collection(db, "users", auth.currentUser.uid, "tasks");
         const querySnapshot = await getDocs(userTasksCollection);
         const loadedTasks = [];
         querySnapshot.forEach((doc) => {
@@ -85,7 +86,7 @@ const Task: React.FC = () => {
 
       // Eliminar la tarea de la base de datos de Firebase
       await deleteDoc(
-        doc(db, "users", user.uid.toString(), "tasks", taskId.toString())
+        doc(db, "users", auth.currentUser.uid.toString(), "tasks", taskId.toString())
       );
     } catch (error) {
       console.error("Error removing task from Firestore", error);
@@ -93,26 +94,28 @@ const Task: React.FC = () => {
   };
 
   const handleToggleDone = async (taskId: number) => {
+    console.log(auth.currentUser.uid);
+    console.log(taskId);
+    
+    
     try {
-      const taskDocRef = doc(
-        db,
-        "users",
-        user.uid.toString(),
-        "tasks",
-        taskId.toString()
-      );
-
-      const newCompletedValue = !completedTasks.includes(taskId);
-
-      // Cambiar el estado "completed" de la tarea en Firestore
-      await updateDoc(taskDocRef, {
-        completed: newCompletedValue,
+      const taskRef = doc(db, "users", auth.currentUser.uid.toString(), "tasks", taskId.toString());
+      // Actualizar el estado local de completedTasks primero
+      if (completedTasks.includes(taskId)) {
+        setCompletedTasks(completedTasks.filter((id) => id !== taskId));
+      } else {
+        setCompletedTasks([...completedTasks, taskId]);
+      }
+  
+      // Luego, actualizar el estado en Firestore para reflejar el cambio
+      await updateDoc(taskRef, {
+        completed: !completedTasks.includes(taskId),
       });
-
+  
       // Actualizar el estado local en Redux
       dispatch(toggleTask(taskId));
     } catch (error) {
-      console.error("Error updating task in Firestore", error);
+      console.error("Error changing done", error);
     }
   };
 

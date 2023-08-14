@@ -1,6 +1,4 @@
-import { createSlice, PayloadAction, createAsyncThunk } from '@reduxjs/toolkit';
-import { auth, db } from '../components/firebaseConfig';
-
+import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 export interface Task {
   id: number;
@@ -24,8 +22,8 @@ const taskSlice = createSlice({
   name: 'tasks',
   initialState,
   reducers: {
-    addTask: (state, action: PayloadAction<string>) => {
-      state.tasks.push({ id: Date.now(), task: action.payload, completed: false });
+    addTask: (state, action: PayloadAction<Task>) => {
+      state.tasks.push(action.payload);
     },
     toggleTask: (state, action: PayloadAction<number>) => {
       const taskId = action.payload;
