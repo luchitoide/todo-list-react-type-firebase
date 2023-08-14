@@ -4,9 +4,8 @@ import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
 } from "firebase/auth";
-import { auth, db } from "./components/firebaseConfig";
+import { auth,  } from "./components/firebaseConfig";
 import { setAuthentication } from "./features/taskSlice";
-import { getFirestore, collection, getDocs } from 'firebase/firestore/lite'
 
 
 const Auth: React.FC = () => {

@@ -6,7 +6,6 @@ import {
   removeTask,
   loadUserTasks,
 } from "./features/taskSlice";
-import axios from "axios";
 import { Task as TaskType } from "./features/taskSlice";
 import { auth, db } from "./components/firebaseConfig";
 import {
@@ -19,6 +18,7 @@ import {
 } from "firebase/firestore/lite";
 
 const Task: React.FC = () => {
+  
   const isAuthenticated = useSelector(
     (state: { tasks: { isAuthenticated: boolean } }) =>
       state.tasks.isAuthenticated
@@ -38,7 +38,7 @@ const Task: React.FC = () => {
         const userTasksCollection = collection(
           db,
           "users",
-          auth.currentUser.uid,
+          auth.currentUser?.uid || "",
           "tasks"
         );
         const newTaskDocRef = await addDoc(userTasksCollection, {
@@ -46,10 +46,9 @@ const Task: React.FC = () => {
           completed: false, // Agregar el estado inicial como "false"
         });
         const newTaskId = newTaskDocRef.id;
-        console.log(newTaskId);
 
         setNewTask(""); // Limpiar el campo de entrada
-        dispatch(addTask({ id: newTaskId, task: newTask, completed: false }));
+        dispatch(addTask({ id: newTaskId , task: newTask, completed: false }));
       } catch (error) {
         console.error("Error adding task to Firestore", error);
       }
@@ -62,12 +61,12 @@ const Task: React.FC = () => {
         const userTasksCollection = collection(
           db,
           "users",
-          auth.currentUser.uid,
+          auth.currentUser?.uid || "",
           "tasks"
         );
         const querySnapshot = await getDocs(userTasksCollection);
-        const loadedTasks = [];
-        const loadedCompletedTasks = []; // Nuevo array para almacenar las tareas completadas
+        const loadedTasks:Array<any> = [];
+        const loadedCompletedTasks:Array<any> = []; // Nuevo array para almacenar las tareas completadas
         querySnapshot.forEach((doc) => {
           const taskData = doc.data();
           loadedTasks.push({
@@ -104,7 +103,7 @@ const Task: React.FC = () => {
         doc(
           db,
           "users",
-          auth.currentUser.uid.toString(),
+          auth.currentUser?.uid.toString() || "",
           "tasks",
           taskId.toString()
         )
@@ -115,14 +114,14 @@ const Task: React.FC = () => {
   };
 
   const handleToggleDone = async (taskId: number) => {
-    console.log(auth.currentUser.uid);
+    console.log(auth.currentUser?.uid);
     console.log(taskId);
 
     try {
       const taskRef = doc(
         db,
         "users",
-        auth.currentUser.uid.toString(),
+        auth.currentUser?.uid.toString()|| "",
         "tasks",
         taskId.toString()
       );
@@ -176,36 +175,36 @@ const Task: React.FC = () => {
                     className={`task ${
                       task.completed ? "completed" : ""
                     } cursor-pointer py-2`}
-                    onClick={() => handleToggleTask(task.id)}
+                    onClick={() => handleToggleTask(task.id as number)}
                   >
                     <div className="flex mb-4 items-center">
                       <p
                         className={`w-full text-black ${
-                          completedTasks.includes(task.id)
+                          completedTasks.includes(task.id as number)
                             ? "line-through text-green-500"
                             : ""
                         }`}
                       >
                         {task.task}
                       </p>
-                      {completedTasks.includes(task.id) ? (
+                      {completedTasks.includes(task.id as number) ? (
                         <button
                           className="flex-no-shrink p-2 ml-4 bg-white hover:bg-gray-500 text-gray-500 hover:text-white border-2 border-gray-500 py-1 px-2 rounded whitespace-nowrap"
-                          onClick={() => handleToggleDone(task.id)}
+                          onClick={() => handleToggleDone(task.id as number)}
                         >
                           Not Done
                         </button>
                       ) : (
                         <button
                           className="flex-no-shrink p-2 ml-4 bg-white hover:bg-green-500 text-green-500 hover:text-white border-2 border-green-500 py-1 px-2 rounded"
-                          onClick={() => handleToggleDone(task.id)}
+                          onClick={() => handleToggleDone(task.id as number)}
                         >
                           Done
                         </button>
                       )}
                       <button
                         className="flex-no-shrink p-2 ml-4 bg-white hover:bg-red-500 text-red-500 hover:text-white border-2 border-red-500 py-1 px-2 rounded"
-                        onClick={() => handleRemoveTask(task.id)}
+                        onClick={() => handleRemoveTask(task.id as number)}
                       >
                         Remove
                       </button>
