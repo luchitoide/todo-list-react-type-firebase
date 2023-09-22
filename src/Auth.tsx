@@ -48,19 +48,27 @@ const Auth: React.FC = () => {
     dispatch(setAuthentication(false));
     setUserEmail(null)
   };
+
+  const handleKeyDown = (e: { key: string; preventDefault: () => void; }) => {
+    if (e.key === "Enter") {
+      e.preventDefault(); // Evita que se añada una nueva línea al presionar Enter
+      // Lógica para enviar el mensaje aquí, por ejemplo, llamar a una función que envía el mensaje.
+      handleAuth();
+    }
+  };
   
 
   return (
     <div className="h-100 w-full flex items-center justify-center bg-teal-lightest font-sans">
-      <div className="bg-white rounded shadow p-6 m-8 w-full lg:w-1/3">
+      <div className="bg-white rounded shadow py-2 px-6 mx-8 w-full lg:w-5/6 lg:max-w-xl">
         {userEmail ? ( // Si hay un correo de usuario, mostrar solo el correo
-          <div>
-            <p className="text-grey-darkest text-3xl mb-4">
+          <div className="flex justify-between items-center">
+            <p className="text-grey-darkest text-l ">
               Welcome, {userEmail}!
             </p>
             <button
               onClick={handleLogOut} // Cerrar sesión
-              className="w-full p-2 rounded bg-teal-500 text-white hover:bg-teal-600"
+              className=" p-1 rounded bg-red-600 text-white hover:bg-red-900"
             >
               Log Out
             </button>
@@ -82,7 +90,9 @@ const Auth: React.FC = () => {
               type="password"
               placeholder="Password"
               value={password}
+              onKeyDown={handleKeyDown}
               onChange={(e) => setPassword(e.target.value)}
+
             />
             <button
               onClick={handleAuth}
@@ -96,7 +106,7 @@ const Auth: React.FC = () => {
                 className="cursor-pointer text-teal-500 hover:underline"
                 onClick={() => setIsLogin(!isLogin)}
               >
-                {isLogin ? "Sign up here" : "Log in here"}
+                {isLogin ? " Sign up here" : " Log in here"}
               </span>
             </p>
             {errorMessage && (

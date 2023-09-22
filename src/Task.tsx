@@ -146,11 +146,11 @@ const Task: React.FC = () => {
 
   return (
     <div className="h-100 w-full flex items-center justify-center bg-teal-lightest font-sans">
-      <div className="bg-white rounded shadow p-6 m-8 w-full lg:w-3/4 lg:max-w-lg">
+      <div className="bg-white rounded shadow p-6 m-8 w-full lg:w-5/6 lg:max-w-xl">
         {isAuthenticated ? (
           <>
             <div className="mb-4">
-              <h1 className="text-grey-darkest text-3xl mb-4">TO-DO List</h1>
+              <h1 className="text-grey-darkest text-2xl mb-4">TO-DO List</h1>
               <div className="flex mt-4">
                 <input
                   className="shadow appearance-none border rounded w-full py-2 px-3 mr-4 text-grey-darker"
@@ -217,9 +217,9 @@ const Task: React.FC = () => {
         ) : (
           <>
             <div className="text-center">
-              <h1 className="text-grey-darkest text-3xl mb-4">TO-DO List</h1>
-              <p className="text-red-500 text-xl mb-4">
-                You must log in first.
+              <h1 className="text-grey-darkest text-4xl mb-4">TO-DO List</h1>
+              <p className="text-red-500 text-3xl mb-4">
+              You must first log in to access your tasks.
               </p>
             </div>
           </>
